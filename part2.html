@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DropNova — Supplier Manager</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,Arial,sans-serif;
+  background:#f5f7fb;
+  color:#111827
+}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0}
+
+.top{
+  height:70px;
+  background:#111827;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 22px;
+}
+.logo{
+  font-size:24px;
+  font-weight:900;
+}
+.logo span{color:#8b5cf6}
+
+.layout{
+  display:grid;
+  grid-template-columns:240px 1fr;
+  min-height:calc(100vh - 70px)
+}
+
+.sidebar{
+  background:#fff;
+  border-right:1px solid #e5e7eb;
+  padding:20px
+}
+.sidebar h3{margin:5px 0 25px}
+.menu{
+  width:100%;
+  text-align:left;
+  padding:13px;
+  background:transparent;
+  border-radius:10px;
+  margin:4px 0;
+}
+.menu:hover,.menu.active{
+  background:#ede9fe;
+  color:#6d28d9;
+  font-weight:700
+}
+
+.main{padding:25px;max-width:1300px;width:100%}
+
+.title{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:22px
+}
+
+.primary{
+  background:#7c3aed;
+  color:#fff;
+  padding:12px 16px;
+  border-radius:10px;
+  font-weight:700
+}
+.secondary{
+  background:#f3f4f6;
+  padding:11px 15px;
+  border-radius:10px
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:20px
+}
+.card{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  padding:20px
+}
+.card small{color:#6b7280}
+.card strong{
+  display:block;
+  font-size:28px;
+  margin-top:8px
+}
+
+.panel{
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:17px;
+  padding:20px;
+  margin-bottom:20px
+}
+
+.supplier{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  border:1px solid #e5e7eb;
+  padding:17px;
+  border-radius:14px;
+  margin:10px 0
+}
+.supplier-left{
+  display:flex;
+  align-items:center;
+  gap:14px
+}
+.icon{
+  width:50px;
+  height:50px;
+  border-radius:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#ede9fe;
+  font-size:25px
+}
+.status{
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:700
+}
+.connected{
+  background:#dcfce7;
+  color:#166534
+}
+.off{
+  background:#fee2e2;
+  color:#991b1b
+}
+
+.form{
+  display:grid;
+  gap:13px
+}
+.form label{
+  font-size:13px;
+  font-weight:700
+}
+.form input,.form select{
+  width:100%;
+  padding:12px;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  outline:none
+}
+.form input:focus{
+  border-color:#7c3aed
+}
+
+.table{
+  width:100%;
+  border-collapse:collapse
+}
+.table th,.table td{
+  text-align:left;
+  padding:13px;
+  border-bottom:1px solid #eee
+}
+.table th{
+  font-size:13px;
+  color:#6b7280
+}
+
+.toggle{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px 0;
+  border-bottom:1px solid #eee
+}
+
+.switch{
+  width:48px;
+  height:27px;
+  background:#d1d5db;
+  border-radius:30px;
+  position:relative;
+  cursor:pointer
+}
+.switch.on{background:#7c3aed}
+.switch:after{
+  content:"";
+  width:21px;
+  height:21px;
+  position:absolute;
+  top:3px;
+  left:3px;
+  background:#fff;
+  border-radius:50%;
+  transition:.2s
+}
+.switch.on:after{left:24px}
+
+.log{
+  background:#111827;
+  color:#d1d5db;
+  padding:15px;
+  border-radius:12px;
+  font-family:monospace;
+  font-size:13px;
+  line-height:1.7;
+  max-height:280px;
+  overflow:auto
+}
+
+.modal-bg{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0008;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  padding:15px
+}
+.modal{
+  width:min(560px,100%);
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  border-radius:20px;
+  padding:23px
+}
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px
+}
+.close{
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  background:#f3f4f6
+}
+
+.hidden{display:none!important}
+
+@media(max-width:900px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+}
+@media(max-width:600px){
+  .cards{grid-template-columns:1fr}
+  .main{padding:15px}
+  .supplier{align-items:flex-start;flex-direction:column}
+  .table{font-size:13px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <div class="logo">Drop<span>Nova</span></div>
+  <div>Supplier Automation</div>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+  <h3>CONTROL PANEL</h3>
+
+  <button class="menu active" onclick="page('overview',this)">
+    📊 Overview
+  </button>
+
+  <button class="menu" onclick="page('suppliers',this)">
+    🚚 Suppliers
+  </button>
+
+  <button class="menu" onclick="page('routing',this)">
+    🔀 Order Routing
+  </button>
+
+  <button class="menu" onclick="page('mapping',this)">
+    🔗 Product Mapping
+  </button>
+
+  <button class="menu" onclick="page('logs',this)">
+    🧾 API Logs
+  </button>
+</aside>
+
+<main class="main">
+
+<!-- OVERVIEW -->
+
+<section id="overview">
+
+<div class="title">
+  <div>
+    <h1>Supplier Automation</h1>
+    <p style="color:#6b7280">
+      Manage suppliers and automate order fulfillment.
+    </p>
+  </div>
+
+  <button class="primary" onclick="openSupplier()">
+    + Add Supplier
+  </button>
+</div>
+
+<div class="cards">
+
+  <div class="card">
+    <small>Total Suppliers</small>
+    <strong id="totalSuppliers">0</strong>
+  </div>
+
+  <div class="card">
+    <small>Connected APIs</small>
+    <strong id="connectedApis">0</strong>
+  </div>
+
+  <div class="card">
+    <small>Auto Orders</small>
+    <strong id="autoOrders">ON</strong>
+  </div>
+
+  <div class="card">
+    <small>Failed Orders</small>
+    <strong>0</strong>
+  </div>
+
+</div>
+
+<div class="panel">
+
+<h2>⚡ Automation Flow</h2>
+
+<div style="
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:12px;
+margin-top:18px">
+
+<div class="card">
+🛒<br><b>Customer Order</b>
+</div>
+
+<div class="card">
+⚙️<br><b>System Checks</b>
+</div>
+
+<div class="card">
+🚚<br><b>Supplier API</b>
+</div>
+
+<div class="card">
+📦<br><b>Fulfillment</b>
+</div>
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>Connected Suppliers</h2>
+
+<div id="overviewSuppliers"></div>
+
+</div>
+
+</section>
+
+
+<!-- SUPPLIERS -->
+
+<section id="suppliers" class="hidden">
+
+<div class="title">
+  <div>
+    <h1>Suppliers</h1>
+    <p style="color:#6b7280">
+      Add as many supplier integrations as your backend supports.
+    </p>
+  </div>
+
+  <button class="primary" onclick="openSupplier()">
+    + Add Supplier
+  </button>
+</div>
+
+<div class="panel">
+
+<div id="supplierList"></div>
+
+</div>
+
+</section>
+
+
+<!-- ROUTING -->
+
+<section id="routing" class="hidden">
+
+<div class="title">
+  <div>
+    <h1>Automatic Order Routing</h1>
+    <p style="color:#6b7280">
+      Decide how incoming orders are sent to suppliers.
+    </p>
+  </div>
+</div>
+
+<div class="panel">
+
+<div class="toggle">
+  <div>
+    <b>Automatic supplier ordering</b>
+    <div style="color:#777;font-size:13px">
+      Send eligible orders automatically.
+    </div>
+  </div>
+  <div class="switch on"
+       id="autoSwitch"
+       onclick="toggleAuto()"></div>
+</div>
+
+<div class="toggle">
+  <div>
+    <b>COD orders</b>
+    <div style="color:#777;font-size:13px">
+      Allow COD orders to enter supplier routing.
+    </div>
+  </div>
+  <div class="switch on"></div>
+</div>
+
+<div class="toggle">
+  <div>
+    <b>Check supplier stock</b>
+    <div style="color:#777;font-size:13px">
+      Verify availability before placing order.
+    </div>
+  </div>
+  <div class="switch on"></div>
+</div>
+
+<div class="toggle">
+  <div>
+    <b>Automatic fallback supplier</b>
+    <div style="color:#777;font-size:13px">
+      Try another mapped supplier if the first fails.
+    </div>
+  </div>
+  <div class="switch on"></div>
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>Routing Priority</h2>
+
+<p style="color:#777;margin:8px 0 15px">
+The first available supplier will be selected.
+</p>
+
+<table class="table">
+
+<thead>
+<tr>
+<th>Priority</th>
+<th>Supplier</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="routingTable"></tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- MAPPING -->
+
+<section id="mapping" class="hidden">
+
+<div class="title">
+  <div>
+    <h1>Product Mapping</h1>
+    <p style="color:#6b7280">
+      Connect store products to supplier products.
+    </p>
+  </div>
+</div>
+
+<div class="panel">
+
+<table class="table">
+
+<thead>
+<tr>
+<th>Store Product</th>
+<th>Supplier</th>
+<th>Supplier Product ID</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="mappingTable"></tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- LOGS -->
+
+<section id="logs" class="hidden">
+
+<div class="title">
+  <div>
+    <h1>API Activity</h1>
+    <p style="color:#6b7280">
+      Monitor supplier requests and order automation.
+    </p>
+  </div>
+
+  <button class="secondary" onclick="clearLogs()">
+    Clear Logs
+  </button>
+</div>
+
+<div class="panel">
+
+<div class="log" id="logsBox"></div>
+
+</div>
+
+</section>
+
+</main>
+</div>
+
+
+<!-- ADD SUPPLIER MODAL -->
+
+<div class="modal-bg" id="supplierModal">
+
+<div class="modal">
+
+<div class="modal-head">
+  <h2>Add Supplier</h2>
+  <button class="close"
+          onclick="closeSupplier()">×</button>
+</div>
+
+<div class="form">
+
+<label>Supplier Name</label>
+<input id="supplierName"
+       placeholder="Example: CJdropshipping">
+
+<label>API Base URL</label>
+<input id="apiUrl"
+       placeholder="https://api.example.com">
+
+<label>API Key</label>
+<input id="apiKey"
+       type="password"
+       placeholder="Supplier API key">
+
+<label>API Secret</label>
+<input id="apiSecret"
+       type="password"
+       placeholder="Supplier API secret">
+
+<label>Country</label>
+<select id="country">
+  <option value="IN">India</option>
+  <option value="US">USA</option>
+  <option value="UK">UK</option>
+  <option value="GLOBAL">Global</option>
+</select>
+
+<label>Payment Support</label>
+<select id="paymentSupport">
+  <option value="COD">COD</option>
+  <option value="PREPAID">Prepaid</option>
+  <option value="BOTH">COD + Prepaid</option>
+</select>
+
+<label>Order API Endpoint</label>
+<input id="orderEndpoint"
+       placeholder="/orders">
+
+<button class="primary"
+        onclick="saveSupplier()">
+  Connect Supplier
+</button>
+
+</div>
+
+</div>
+</div>
+
+
+<script>
+
+/*
+  IMPORTANT:
+
+  This Part 2 stores supplier configuration
+  locally only for demonstration.
+
+  NEVER put real production API secrets
+  inside browser/localStorage.
+
+  Part 4 will move these credentials
+  to a secure server-side backend.
+*/
+
+
+let suppliers = JSON.parse(
+  localStorage.getItem("dropnova_suppliers") || "[]"
+);
+
+let autoOrdering =
+  localStorage.getItem("dropnova_auto") !== "false";
+
+
+function save(){
+
+  localStorage.setItem(
+    "dropnova_suppliers",
+    JSON.stringify(suppliers)
+  );
+
+  localStorage.setItem(
+    "dropnova_auto",
+    autoOrdering
+  );
+}
+
+
+function page(id,btn){
+
+  document.querySelectorAll("main section")
+    .forEach(x=>x.classList.add("hidden"));
+
+  document.getElementById(id)
+    .classList.remove("hidden");
+
+  document.querySelectorAll(".menu")
+    .forEach(x=>x.classList.remove("active"));
+
+  btn.classList.add("active");
+
+  render();
+}
+
+
+function openSupplier(){
+
+  document.getElementById("supplierModal")
+    .style.display="flex";
+}
+
+
+function closeSupplier(){
+
+  document.getElementById("supplierModal")
+    .style.display="none";
+}
+
+
+function saveSupplier(){
+
+  const name =
+    document.getElementById("supplierName").value.trim();
+
+  const apiUrl =
+    document.getElementById("apiUrl").value.trim();
+
+  const apiKey =
+    document.getElementById("apiKey").value.trim();
+
+  const apiSecret =
+    document.getElementById("apiSecret").value.trim();
+
+  const country =
+    document.getElementById("country").value;
+
+  const payment =
+    document.getElementById("paymentSupport").value;
+
+  const endpoint =
+    document.getElementById("orderEndpoint").value.trim();
+
+  if(!name || !apiUrl){
+
+    alert("Supplier name and API URL are required.");
+    return;
+  }
+
+  suppliers.push({
+
+    id:"SUP-"+Date.now(),
+
+    name:name,
+
+    apiUrl:apiUrl,
+
+    /*
+      Demo only.
+      Production backend will encrypt/store these.
+    */
+    apiKey:apiKey,
+
+    apiSecret:apiSecret,
+
+    country:country,
+
+    payment:payment,
+
+    orderEndpoint:endpoint || "/orders",
+
+    connected:true,
+
+    createdAt:new Date().toISOString()
+
+  });
+
+  save();
+
+  addLog(
+    "SUPPLIER_CONNECTED",
+    name
+  );
+
+  closeSupplier();
+
+  document.getElementById("supplierName").value="";
+  document.getElementById("apiUrl").value="";
+  document.getElementById("apiKey").value="";
+  document.getElementById("apiSecret").value="";
+  document.getElementById("orderEndpoint").value="";
+
+  render();
+
+  alert(
+    "Supplier added. In Part 4 the credentials will be moved to the secure backend."
+  );
+}
+
+
+function removeSupplier(id){
+
+  const supplier =
+    suppliers.find(s=>s.id===id);
+
+  if(!supplier)return;
+
+  if(confirm(
+    "Remove "+supplier.name+"?"
+  )){
+
+    suppliers =
+      suppliers.filter(s=>s.id!==id);
+
+    save();
+
+    addLog(
+      "SUPPLIER_REMOVED",
+      supplier.name
+    );
+
+    render();
+  }
+}
+
+
+function toggleAuto(){
+
+  autoOrdering=!autoOrdering;
+
+  save();
+
+  addLog(
+    "AUTO_ORDERING",
+    autoOrdering ? "ENABLED":"DISABLED"
+  );
+
+  render();
+}
+
+
+function testConnection(id){
+
+  const supplier =
+    suppliers.find(s=>s.id===id);
+
+  if(!supplier)return;
+
+  addLog(
+    "API_CONNECTION_TEST",
+    supplier.name
+  );
+
+  /*
+    Real API request will be made
+    server-side in Part 4.
+  */
+
+  setTimeout(()=>{
+
+    addLog(
+      "API_RESPONSE",
+      supplier.name+" connection test simulated"
+    );
+
+    alert(
+      "Connection test simulated successfully."
+    );
+
+  },500);
+}
+
+
+function addLog(type,message){
+
+  const logs =
+    JSON.parse(
+      localStorage.getItem("dropnova_logs") || "[]"
+    );
+
+  logs.unshift({
+
+    time:new Date().toLocaleString(),
+
+    type:type,
+
+    message:message
+
+  });
+
+  localStorage.setItem(
+    "dropnova_logs",
+    JSON.stringify(logs.slice(0,100))
+  );
+
+  renderLogs();
+}
+
+
+function renderLogs(){
+
+  const box =
+    document.getElementById("logsBox");
+
+  if(!box)return;
+
+  const logs =
+    JSON.parse(
+      localStorage.getItem("dropnova_logs") || "[]"
+    );
+
+  if(logs.length===0){
+
+    box.innerHTML=
+      "No API activity yet.";
+
+    return;
+  }
+
+  box.innerHTML =
+    logs.map(l=>
+      `[${l.time}] ${l.type}: ${l.message}`
+    ).join("<br>");
+}
+
+
+function clearLogs(){
+
+  localStorage.removeItem(
+    "dropnova_logs"
+  );
+
+  renderLogs();
+}
+
+
+function renderSuppliers(){
+
+  const list =
+    document.getElementById("supplierList");
+
+  const overview =
+    document.getElementById("overviewSuppliers");
+
+  if(suppliers.length===0){
+
+    list.innerHTML=`
+      <div style="padding:25px;text-align:center;color:#777">
+        No suppliers connected yet.<br><br>
+        Click <b>+ Add Supplier</b> to connect one.
+      </div>
+    `;
+
+    overview.innerHTML=`
+      <p style="color:#777">
+        No suppliers connected.
+      </p>
+    `;
+
+    return;
+  }
+
+  const html =
+    suppliers.map(s=>`
+
+      <div class="supplier">
+
+        <div class="supplier-left">
+
+          <div class="icon">🚚</div>
+
+          <div>
+            <b>${escapeHTML(s.name)}</b>
+
+            <div style="font-size:13px;color:#777">
+              ${escapeHTML(s.country)}
+              · ${escapeHTML(s.payment)}
+            </div>
+
+            <div style="font-size:12px;color:#777">
+              ${escapeHTML(s.apiUrl)}
+            </div>
+
+          </div>
+
+        </div>
+
+        <div>
+
+          <span class="status connected">
+            ● Connected
+          </span>
+
+          <button
+            class="secondary"
+            onclick="testConnection('${s.id}')"
+            style="margin-left:5px">
+            Test
+          </button>
+
+          <button
+            onclick="removeSupplier('${s.id}')"
+            style="
+            background:#fee2e2;
+            color:#991b1b;
+            padding:10px;
+            border-radius:9px;
+            margin-left:5px">
+            Remove
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("");
+
+  list.innerHTML=html;
+
+  overview.innerHTML =
+    suppliers.slice(0,5).map(s=>`
+
+      <div class="supplier">
+
+        <div class="supplier-left">
+          <div class="icon">🚚</div>
+
+          <div>
+            <b>${escapeHTML(s.name)}</b>
+            <div style="font-size:13px;color:#777">
+              ${escapeHTML(s.payment)}
+            </div>
+          </div>
+        </div>
+
+        <span class="status connected">
+          Connected
+        </span>
+
+      </div>
+
+    `).join("");
+}
+
+
+function renderRouting(){
+
+  document.getElementById("autoOrders")
+    .textContent =
+      autoOrdering ? "ON":"OFF";
+
+  document.getElementById("autoSwitch")
+    .classList.toggle(
+      "on",
+      autoOrdering
+    );
+
+  const table =
+    document.getElementById("routingTable");
+
+  table.innerHTML =
+    suppliers.map((s,i)=>`
+
+      <tr>
+
+        <td>#${i+1}</td>
+
+        <td>${escapeHTML(s.name)}</td>
+
+        <td>
+          <span class="status connected">
+            Ready
+          </span>
+        </td>
+
+        <td>
+          <button class="secondary"
+            onclick="testConnection('${s.id}')">
+            Test
+          </button>
+        </td>
+
+      </tr>
+
+    `).join("");
+
+  if(suppliers.length===0){
+
+    table.innerHTML=`
+      <tr>
+        <td colspan="4">
+          No suppliers configured.
+        </td>
+      </tr>
+    `;
+  }
+}
+
+
+function renderMapping(){
+
+  const table =
+    document.getElementById("mappingTable");
+
+  /*
+    Example store products.
+    Part 4 will load these from database.
+  */
+
+  const products=[
+    ["Premium Wireless Earbuds","—","—"],
+    ["Smart LED Desk Lamp","—","—"],
+    ["Minimal Fashion Watch","—","—"]
+  ];
+
+  table.innerHTML =
+    products.map(p=>`
+
+      <tr>
+
+        <td>${p[0]}</td>
+
+        <td>
+          <select>
+            <option value="">Select supplier</option>
+            ${suppliers.map(s=>
+              `<option>${escapeHTML(s.name)}</option>`
+            ).join("")}
+          </select>
+        </td>
+
+        <td>
+          <input
+            placeholder="Supplier product ID"
+            style="
+            padding:8px;
+            border:1px solid #ddd;
+            border-radius:7px">
+        </td>
+
+        <td>
+          <span class="status off">
+            Not mapped
+          </span>
+        </td>
+
+      </tr>
+
+    `).join("");
+}
+
+
+function renderStats(){
+
+  document.getElementById("totalSuppliers")
+    .textContent=suppliers.length;
+
+  document.getElementById("connectedApis")
+    .textContent=
+      suppliers.filter(s=>s.connected).length;
+}
+
+
+function render(){
+
+  renderStats();
+  renderSuppliers();
+  renderRouting();
+  renderMapping();
+  renderLogs();
+}
+
+
+function escapeHTML(str){
+
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+
+render();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DropNova — Smart Dropshipping Store</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Inter,Arial,sans-serif;
+  background:#f5f7fb;
+  color:#111827;
+}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
+}
+.nav{
+  max-width:1200px;
+  margin:auto;
+  height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+}
+.logo{
+  font-size:24px;
+  font-weight:900;
+  color:#6d28d9;
+}
+.logo span{color:#111827}
+
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.nav-btn{
+  background:#f3f4f6;
+  padding:10px 14px;
+  border-radius:12px;
+}
+.cart{
+  position:relative;
+  background:#111827;
+  color:white;
+  padding:11px 15px;
+  border-radius:12px;
+}
+.badge{
+  position:absolute;
+  top:-7px;
+  right:-7px;
+  background:#ef4444;
+  color:white;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  font-size:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.hero{
+  max-width:1200px;
+  margin:25px auto;
+  padding:50px 25px;
+  border-radius:28px;
+  background:linear-gradient(135deg,#111827,#4c1d95,#7c3aed);
+  color:white;
+  overflow:hidden;
+}
+.hero h1{
+  font-size:clamp(35px,6vw,65px);
+  max-width:700px;
+  line-height:1.05;
+}
+.hero p{
+  margin-top:18px;
+  max-width:600px;
+  color:#ddd6fe;
+  font-size:17px;
+}
+.hero button{
+  margin-top:25px;
+  padding:14px 22px;
+  border-radius:14px;
+  background:white;
+  color:#4c1d95;
+  font-weight:800;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:0 18px 60px;
+}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:25px 0;
+  gap:15px;
+}
+.section-head h2{font-size:26px}
+
+.search{
+  width:280px;
+  padding:12px 15px;
+  border:1px solid #ddd;
+  border-radius:12px;
+  outline:none;
+}
+
+.products{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+
+.product{
+  background:white;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid #e5e7eb;
+  transition:.2s;
+}
+.product:hover{
+  transform:translateY(-4px);
+  box-shadow:0 15px 30px #00000012;
+}
+.product-img{
+  height:210px;
+  background:linear-gradient(135deg,#ede9fe,#f3f4f6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:70px;
+}
+.product-body{padding:15px}
+.product-body h3{font-size:17px}
+.category{
+  color:#7c3aed;
+  font-size:12px;
+  margin-bottom:7px;
+  font-weight:700;
+}
+.price{
+  font-size:20px;
+  font-weight:900;
+  margin:10px 0;
+}
+.old{
+  text-decoration:line-through;
+  color:#9ca3af;
+  font-size:13px;
+  margin-left:5px;
+}
+.add{
+  width:100%;
+  padding:11px;
+  border-radius:11px;
+  background:#111827;
+  color:white;
+  font-weight:700;
+}
+
+.features{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-top:30px;
+}
+.feature{
+  background:white;
+  padding:22px;
+  border-radius:17px;
+  border:1px solid #e5e7eb;
+}
+.feature b{display:block;margin-bottom:7px}
+
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#0008;
+  z-index:100;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+.modal{
+  background:white;
+  width:min(500px,100%);
+  max-height:90vh;
+  overflow:auto;
+  border-radius:20px;
+  padding:22px;
+}
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+.close{
+  background:#f3f4f6;
+  width:35px;
+  height:35px;
+  border-radius:50%;
+}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  padding:14px 0;
+  border-bottom:1px solid #eee;
+}
+.total{
+  display:flex;
+  justify-content:space-between;
+  margin:20px 0;
+  font-size:20px;
+  font-weight:900;
+}
+.checkout{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  background:#7c3aed;
+  color:white;
+  font-weight:800;
+}
+
+.admin{
+  display:none;
+}
+.admin-grid{
+  display:grid;
+  grid-template-columns:230px 1fr;
+  min-height:600px;
+}
+.sidebar{
+  background:#111827;
+  color:white;
+  padding:20px;
+}
+.sidebar h2{margin-bottom:25px}
+.side-btn{
+  display:block;
+  width:100%;
+  text-align:left;
+  background:transparent;
+  color:#d1d5db;
+  padding:13px;
+  border-radius:10px;
+  margin-bottom:6px;
+}
+.side-btn:hover{background:#374151;color:white}
+
+.admin-main{padding:25px}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin:20px 0;
+}
+.stat{
+  background:white;
+  border:1px solid #e5e7eb;
+  padding:20px;
+  border-radius:16px;
+}
+.stat strong{
+  display:block;
+  font-size:27px;
+  margin-top:7px;
+}
+.panel{
+  background:white;
+  border:1px solid #e5e7eb;
+  padding:20px;
+  border-radius:17px;
+  margin-top:20px;
+}
+.form{
+  display:grid;
+  gap:12px;
+}
+.form input,.form select{
+  padding:12px;
+  border:1px solid #ddd;
+  border-radius:10px;
+}
+.primary{
+  padding:12px;
+  border-radius:10px;
+  background:#7c3aed;
+  color:white;
+  font-weight:700;
+}
+
+.login{
+  width:min(400px,100%);
+  background:white;
+  padding:25px;
+  border-radius:20px;
+}
+.login input{
+  width:100%;
+  padding:13px;
+  margin:8px 0;
+  border:1px solid #ddd;
+  border-radius:10px;
+}
+
+@media(max-width:900px){
+  .products{grid-template-columns:repeat(3,1fr)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+  .products{grid-template-columns:repeat(2,1fr)}
+  .features{grid-template-columns:1fr}
+  .search{width:100%}
+  .section-head{align-items:stretch;flex-direction:column}
+  .admin-grid{grid-template-columns:1fr}
+  .sidebar{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="nav">
+    <div class="logo">Drop<span>Nova</span></div>
+
+    <div class="nav-right">
+      <button class="nav-btn" onclick="openAdmin()">Admin</button>
+      <button class="cart" onclick="openCart()">
+        🛒 Cart
+        <span class="badge" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="store">
+
+<section class="hero">
+  <h1>Discover Products.<br>Shop Smarter.</h1>
+  <p>
+    Trending products delivered to your door.
+    Secure checkout, COD support and a modern shopping experience.
+  </p>
+  <button onclick="scrollProducts()">Explore Products →</button>
+</section>
+
+<div class="container">
+
+  <div class="section-head">
+    <h2>🔥 Trending Products</h2>
+    <input
+      class="search"
+      id="search"
+      placeholder="Search products..."
+      oninput="renderProducts()">
+  </div>
+
+  <div class="products" id="products"></div>
+
+  <div class="features">
+    <div class="feature">
+      🚚
+      <b>Fast Delivery</b>
+      Reliable delivery tracking.
+    </div>
+    <div class="feature">
+      💵
+      <b>Cash on Delivery</b>
+      Pay when your order arrives.
+    </div>
+    <div class="feature">
+      🔒
+      <b>Secure Checkout</b>
+      Your payment information stays protected.
+    </div>
+  </div>
+
+</div>
+</main>
+
+<!-- CART -->
+<div class="overlay" id="cartModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Your Cart</h2>
+      <button class="close" onclick="closeCart()">×</button>
+    </div>
+
+    <div id="cartItems"></div>
+
+    <div class="total">
+      <span>Total</span>
+      <span id="cartTotal">₹0</span>
+    </div>
+
+    <button class="checkout" onclick="checkout()">
+      Proceed to Checkout
+    </button>
+  </div>
+</div>
+
+<!-- ADMIN LOGIN -->
+<div class="overlay" id="adminLogin">
+  <div class="login">
+    <div class="modal-head">
+      <h2>Admin Login</h2>
+      <button class="close" onclick="closeAdmin()">×</button>
+    </div>
+
+    <input id="adminEmail" placeholder="Admin email">
+    <input id="adminPassword" type="password" placeholder="Password">
+
+    <button class="primary" style="width:100%;margin-top:10px"
+            onclick="loginAdmin()">
+      Login
+    </button>
+
+    <p style="font-size:12px;color:#777;margin-top:12px">
+      Demo login: admin@dropnova.com / admin123
+    </p>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<section class="admin" id="adminPanel">
+
+<div class="admin-grid">
+
+  <aside class="sidebar">
+    <h2>DropNova</h2>
+
+    <button class="side-btn" onclick="showAdmin('dashboard')">
+      📊 Dashboard
+    </button>
+
+    <button class="side-btn" onclick="showAdmin('productsAdmin')">
+      📦 Products
+    </button>
+
+    <button class="side-btn" onclick="showAdmin('orders')">
+      🛒 Orders
+    </button>
+
+    <button class="side-btn" onclick="showAdmin('suppliers')">
+      🚚 Suppliers
+    </button>
+
+    <button class="side-btn" onclick="showAdmin('payments')">
+      💳 Payments
+    </button>
+
+    <button class="side-btn" onclick="logoutAdmin()">
+      🚪 Logout
+    </button>
+  </aside>
+
+  <div class="admin-main">
+
+    <!-- DASHBOARD -->
+    <div id="dashboard">
+      <h1>Dashboard</h1>
+
+      <div class="stats">
+        <div class="stat">
+          Products
+          <strong id="statProducts">0</strong>
+        </div>
+
+        <div class="stat">
+          Orders
+          <strong>0</strong>
+        </div>
+
+        <div class="stat">
+          Revenue
+          <strong>₹0</strong>
+        </div>
+
+        <div class="stat">
+          Suppliers
+          <strong>0</strong>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>🚀 Platform Status</h3>
+        <p style="margin-top:10px;color:#666">
+          Store foundation is ready. Supplier APIs,
+          payment gateway and automatic fulfillment will
+          be connected in the next parts.
+        </p>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div id="productsAdmin" style="display:none">
+      <h1>Products</h1>
+
+      <div class="panel">
+        <h3>Add Product</h3>
+
+        <div class="form" style="margin-top:15px">
+
+          <input id="pName" placeholder="Product name">
+
+          <input id="pPrice" type="number"
+                 placeholder="Selling price">
+
+          <input id="pOldPrice" type="number"
+                 placeholder="Original price">
+
+          <input id="pCategory"
+                 placeholder="Category">
+
+          <input id="pIcon"
+                 placeholder="Product emoji e.g. 🎧">
+
+          <button class="primary"
+                  onclick="addProduct()">
+            + Add Product
+          </button>
+
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Current Products</h3>
+        <div id="adminProductList"
+             style="margin-top:15px"></div>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div id="orders" style="display:none">
+      <h1>Orders</h1>
+
+      <div class="panel">
+        <p style="color:#777">
+          No orders yet.
+        </p>
+      </div>
+    </div>
+
+    <!-- SUPPLIERS -->
+    <div id="suppliers" style="display:none">
+      <h1>Suppliers</h1>
+
+      <div class="panel">
+        <h3>Supplier Management</h3>
+
+        <p style="color:#777;margin-top:10px">
+          Part 2 में यहाँ unlimited suppliers,
+          API keys, webhook URLs, COD settings,
+          automatic order routing और supplier
+          status जोड़ेंगे।
+        </p>
+      </div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div id="payments" style="display:none">
+      <h1>Payments</h1>
+
+      <div class="panel">
+        <h3>Payment Methods</h3>
+
+        <div style="margin-top:15px">
+          ☑ Cash on Delivery<br><br>
+          ☐ UPI<br><br>
+          ☐ Razorpay<br><br>
+          ☐ Stripe
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</section>
+
+<script>
+
+let products = [
+  {
+    id:1,
+    name:"Premium Wireless Earbuds",
+    price:899,
+    oldPrice:1499,
+    category:"Tech",
+    icon:"🎧"
+  },
+  {
+    id:2,
+    name:"Smart LED Desk Lamp",
+    price:699,
+    oldPrice:1199,
+    category:"Home",
+    icon:"💡"
+  },
+  {
+    id:3,
+    name:"Minimal Fashion Watch",
+    price:999,
+    oldPrice:1799,
+    category:"Fashion",
+    icon:"⌚"
+  },
+  {
+    id:4,
+    name:"Portable Mini Fan",
+    price:499,
+    oldPrice:799,
+    category:"Lifestyle",
+    icon:"🌀"
+  },
+  {
+    id:5,
+    name:"Travel Organizer Bag",
+    price:599,
+    oldPrice:999,
+    category:"Travel",
+    icon:"🎒"
+  },
+  {
+    id:6,
+    name:"Magnetic Phone Holder",
+    price:399,
+    oldPrice:699,
+    category:"Accessories",
+    icon:"📱"
+  },
+  {
+    id:7,
+    name:"Beauty Storage Box",
+    price:549,
+    oldPrice:899,
+    category:"Beauty",
+    icon:"💄"
+  },
+  {
+    id:8,
+    name:"Smart Water Bottle",
+    price:799,
+    oldPrice:1299,
+    category:"Lifestyle",
+    icon:"🥤"
+  }
+];
+
+let cart=[];
+
+function renderProducts(){
+
+  const query =
+    document.getElementById("search").value.toLowerCase();
+
+  const box=document.getElementById("products");
+
+  const filtered=products.filter(p =>
+    p.name.toLowerCase().includes(query) ||
+    p.category.toLowerCase().includes(query)
+  );
+
+  box.innerHTML=filtered.map(p=>`
+
+    <div class="product">
+
+      <div class="product-img">
+        ${p.icon}
+      </div>
+
+      <div class="product-body">
+
+        <div class="category">
+          ${p.category}
+        </div>
+
+        <h3>${p.name}</h3>
+
+        <div class="price">
+          ₹${p.price}
+          <span class="old">
+            ₹${p.oldPrice}
+          </span>
+        </div>
+
+        <button class="add"
+                onclick="addToCart(${p.id})">
+          Add to Cart
+        </button>
+
+      </div>
+
+    </div>
+
+  `).join("");
+
+  document.getElementById("statProducts").textContent =
+    products.length;
+
+  renderAdminProducts();
+}
+
+function addToCart(id){
+
+  const product=products.find(p=>p.id===id);
+
+  cart.push(product);
+
+  updateCart();
+
+  alert("Product added to cart!");
+}
+
+function updateCart(){
+
+  document.getElementById("cartCount").textContent =
+    cart.length;
+
+  const box=document.getElementById("cartItems");
+
+  if(cart.length===0){
+    box.innerHTML="<p>Your cart is empty.</p>";
+    document.getElementById("cartTotal").textContent="₹0";
+    return;
+  }
+
+  let total=0;
+
+  box.innerHTML=cart.map((p,i)=>{
+
+    total+=p.price;
+
+    return `
+      <div class="cart-item">
+        <span>${p.icon} ${p.name}</span>
+        <b>₹${p.price}</b>
+      </div>
+    `;
+
+  }).join("");
+
+  document.getElementById("cartTotal").textContent =
+    "₹"+total;
+}
+
+function openCart(){
+  updateCart();
+  document.getElementById("cartModal").style.display="flex";
+}
+
+function closeCart(){
+  document.getElementById("cartModal").style.display="none";
+}
+
+function checkout(){
+
+  if(cart.length===0){
+    alert("Cart is empty.");
+    return;
+  }
+
+  alert(
+    "Checkout foundation ready. " +
+    "Real COD/payment processing will be connected in Part 3."
+  );
+}
+
+function openAdmin(){
+  document.getElementById("adminLogin").style.display="flex";
+}
+
+function closeAdmin(){
+  document.getElementById("adminLogin").style.display="none";
+}
+
+function loginAdmin(){
+
+  const email =
+    document.getElementById("adminEmail").value;
+
+  const password =
+    document.getElementById("adminPassword").value;
+
+  if(email==="admin@dropnova.com" &&
+     password==="admin123"){
+
+    closeAdmin();
+
+    document.getElementById("store").style.display="none";
+    document.querySelector("header").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+
+  }else{
+    alert("Invalid admin login.");
+  }
+}
+
+function logoutAdmin(){
+
+  document.getElementById("adminPanel").style.display="none";
+  document.getElementById("store").style.display="block";
+  document.querySelector("header").style.display="block";
+
+}
+
+function showAdmin(section){
+
+  const sections=[
+    "dashboard",
+    "productsAdmin",
+    "orders",
+    "suppliers",
+    "payments"
+  ];
+
+  sections.forEach(id=>{
+    document.getElementById(id).style.display="none";
+  });
+
+  document.getElementById(section).style.display="block";
+}
+
+function addProduct(){
+
+  const name=document.getElementById("pName").value;
+  const price=Number(
+    document.getElementById("pPrice").value
+  );
+  const oldPrice=Number(
+    document.getElementById("pOldPrice").value
+  );
+  const category=
+    document.getElementById("pCategory").value;
+  const icon=
+    document.getElementById("pIcon").value || "📦";
+
+  if(!name || !price || !category){
+    alert("Please fill product name, price and category.");
+    return;
+  }
+
+  products.push({
+    id:Date.now(),
+    name,
+    price,
+    oldPrice:oldPrice || price,
+    category,
+    icon
+  });
+
+  document.getElementById("pName").value="";
+  document.getElementById("pPrice").value="";
+  document.getElementById("pOldPrice").value="";
+  document.getElementById("pCategory").value="";
+  document.getElementById("pIcon").value="";
+
+  renderProducts();
+
+  alert("Product added successfully!");
+}
+
+function deleteProduct(id){
+
+  if(confirm("Delete this product?")){
+
+    products =
+      products.filter(p=>p.id!==id);
+
+    renderProducts();
+  }
+}
+
+function renderAdminProducts(){
+
+  const box=
+    document.getElementById("adminProductList");
+
+  if(!box)return;
+
+  box.innerHTML=products.map(p=>`
+
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:12px 0;
+      border-bottom:1px solid #eee;
+      gap:10px">
+
+      <div>
+        ${p.icon} <b>${p.name}</b>
+        <small style="display:block;color:#777">
+          ₹${p.price} · ${p.category}
+        </small>
+      </div>
+
+      <button
+        onclick="deleteProduct(${p.id})"
+        style="
+        background:#fee2e2;
+        color:#b91c1c;
+        padding:8px 12px;
+        border-radius:8px">
+        Delete
+      </button>
+
+    </div>
+
+  `).join("");
+}
+
+function scrollProducts(){
+  document
+    .getElementById("products")
+    .scrollIntoView({behavior:"smooth"});
+}
+
+renderProducts();
+
+</script>
+
+</body>
+</html>
